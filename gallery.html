@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery | sandunart.xyz</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom Styles -->
+    <style>
+        /* Base styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000;
+            color: #F3F4F6;
+            overflow-x: hidden; /* Prevent horizontal scroll from decorative blobs */
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #111827; }
+        ::-webkit-scrollbar-thumb { background: #F97316; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #EA580C; }
+        
+        /* Core Glassmorphism Style */
+        .glass-effect {
+            background-color: rgba(23, 31, 45, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* The container for each gallery item */
+        .gallery-card {
+            border-radius: 1rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+        }
+        .gallery-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(249, 115, 22, 0.15);
+        }
+
+        /* The image inside the card */
+        .gallery-card img {
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .gallery-card:hover img {
+            transform: scale(1.05);
+        }
+
+        /* Style for the active filter button */
+        .filter-btn.active {
+            background-color: #F97316;
+            color: #ffffff;
+            border-color: rgba(249, 115, 22, 0.5);
+            box-shadow: 0 0 15px rgba(249, 115, 22, 0.4);
+        }
+        
+        /* Style for the 'Visit Site' button on gallery cards */
+        .visit-site-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background-color: rgba(249, 115, 22, 0.8); /* Orange with opacity */
+            color: white;
+            padding: 0.5rem;
+            border-radius: 9999px;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            transform: scale(0.9);
+        }
+        .group:hover .visit-site-btn {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .visit-site-btn:hover {
+            background-color: #EA580C; /* Darker orange on hover */
+            transform: scale(1.1) rotate(6deg);
+        }
+
+        /* Modal animation */
+        .modal-enter-active, .modal-leave-active {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .modal-enter-from, .modal-leave-to {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        /* Decorative background blobs */
+        .blob {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: -10;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <!-- Decorative Background Blobs -->
+    <div class="absolute top-0 left-0 w-full h-full overflow-hidden">
+        <div class="blob w-96 h-96 bg-orange-500 opacity-10 -top-20 -left-20"></div>
+        <div class="blob w-[30rem] h-[30rem] bg-indigo-500 opacity-10 bottom-0 -right-40"></div>
+    </div>
+
+
+    <!-- Top Navigation -->
+    <nav class="glass-effect sticky top-0 z-40">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <a href="./index.html" class="text-white font-bold text-xl tracking-wider">sandunart</a>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <a href="./index.html" class="text-gray-300 hover:bg-gray-700/50 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</a>
+                        <a href="#" class="bg-gray-900/50 text-white px-3 py-2 rounded-md text-sm font-medium" aria-current="page">Gallery</a>
+                        <a href="./about.html" class="text-gray-300 hover:bg-gray-700/50 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">About</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <h1 class="text-4xl sm:text-5xl font-bold tracking-tight text-white">
+                Project Gallery
+            </h1>
+            <p class="mt-4 text-lg text-gray-300 max-w-2xl mx-auto">
+                A showcase of user interfaces, branding, and creative projects.
+            </p>
+        </header>
+
+        <!-- Filter Buttons Section -->
+        <div id="filter-container" class="flex justify-center flex-wrap gap-3 mb-12">
+            <!-- Filter buttons will be injected here -->
+        </div>
+
+        <!-- Gallery Grid -->
+        <div id="gallery-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Gallery items will be injected here by JavaScript -->
+        </div>
+
+    </main>
+
+    <!-- Modal / Lightbox -->
+    <div id="modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+        <div id="modal-content" class="glass-effect rounded-2xl shadow-2xl w-full max-w-4xl max-h-full overflow-auto relative">
+             <button id="close-modal" class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors z-10 rounded-full p-1 hover:bg-white/10">
+                <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <div class="p-2 sm:p-4">
+                <img id="modal-image" src="" alt="Enlarged view" class="w-full h-auto rounded-xl">
+            </div>
+            <div class="p-6 pt-2 sm:pt-4">
+                <h3 id="modal-title" class="text-3xl font-bold text-white"></h3>
+                <p id="modal-category" class="text-orange-400 font-semibold mt-1"></p>
+                <p id="modal-description" class="mt-4 text-gray-300 leading-relaxed"></p>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- DATA ---
+            const portfolioItems = [
+                { title: "Consulting Agency Post", description: "Social media post designed for a modern consulting agency to boost engagement.", imageUrl: "https://raw.githubusercontent.com/ethoart/my-site/main/social1.jpg", category: "SOCIAL MEDIA POST" },
+                { title: "Modern Business Flyer", description: "A sleek, professional flyer design for corporate promotions.", imageUrl: "https://raw.githubusercontent.com/ethoart/my-site/main/print1.jpg", category: "PRINTABLE DESIGN" },
+                { title: "E-commerce Platform UI", description: "A user-friendly interface for an online retail web application.", imageUrl: "https://raw.githubusercontent.com/ethoart/my-site/main/web1.jpg", category: "WEB APPLICATION", siteUrl: "#" },
+                { title: "Creative Agency Branding", description: "A vibrant social media campaign for a creative agency.", imageUrl: "https://raw.githubusercontent.com/ethoart/my-site/main/social2.jpg", category: "SOCIAL MEDIA POST" },
+                { title: "Event Promotion Flyer", description: "Eye-catching flyer design for promoting local events.", imageUrl: "https://raw.githubusercontent.com/ethoart/my-site/main/print2.jpg", category: "PRINTABLE DESIGN" },
+                { title: "Analytics Dashboard UI", description: "A clean and intuitive dashboard for a data analytics web application.", imageUrl: "https://raw.githubusercontent.com/ethoart/my-site/main/web2.jpg", category: "WEB APPLICATION", siteUrl: "#" },
+                { title: "Fashion Brand Announcement", description: "An elegant social media post for a new fashion collection launch.", imageUrl: "https://raw.githubusercontent.com/ethoart/my-site/main/social3.jpg", category: "SOCIAL MEDIA POST" },
+                { title: "Product Catalog Design", description: "A professional catalog layout for product showcases.", imageUrl: "https://raw.githubusercontent.com/ethoart/my-site/main/print3.jpg", category: "PRINTABLE DESIGN" },
+                { title: "SaaS Website Interface", description: "The user interface for a modern Software as a Service platform.", imageUrl: "https://raw.githubusercontent.com/ethoart/my-site/main/web3.jpg", category: "WEB APPLICATION", siteUrl: "#" },
+                { title: "Promotional Social Post", description: "A social media post for product promotion.", imageUrl: "https://raw.githubusercontent.com/ethoart/my-site/main/social4.jpg", category: "SOCIAL MEDIA POST" },
+                { title: "Corporate Brochure", description: "A professional brochure design for corporate use.", imageUrl: "https://raw.githubusercontent.com/ethoart/my-site/main/print4.jpg", category: "PRINTABLE DESIGN" },
+                { title: "Portfolio Website UI", description: "The UI design for a personal portfolio website.", imageUrl: "https://raw.githubusercontent.com/ethoart/my-site/main/web4.jpg", category: "WEB APPLICATION", siteUrl: "#" },
+                { title: "Quote of the Day Post", description: "An inspirational quote graphic for social media.", imageUrl: "https://raw.githubusercontent.com/ethoart/my-site/main/social5.jpg", category: "SOCIAL MEDIA POST" },
+                { title: "Modern Poster Design", description: "A modern poster for advertising or events.", imageUrl: "https://raw.githubusercontent.com/ethoart/my-site/main/print5.jpg", category: "PRINTABLE DESIGN" }
+            ];
+
+            // --- ELEMENTS ---
+            const galleryGrid = document.getElementById('gallery-grid');
+            const filterContainer = document.getElementById('filter-container');
+            const modal = document.getElementById('modal');
+            const modalContent = document.getElementById('modal-content');
+            const modalImage = document.getElementById('modal-image');
+            const modalTitle = document.getElementById('modal-title');
+            const modalCategory = document.getElementById('modal-category');
+            const modalDescription = document.getElementById('modal-description');
+            const closeModalBtn = document.getElementById('close-modal');
+
+            // --- FUNCTIONS ---
+            
+            function populateGallery(items) {
+                galleryGrid.innerHTML = '';
+                items.forEach(item => {
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'gallery-card glass-effect group cursor-pointer';
+
+                    let visitButton = '';
+                    // Check if the item is a web app and has a siteUrl
+                    if (item.category === 'WEB APPLICATION' && item.siteUrl) {
+                        visitButton = `
+                            <a href="${item.siteUrl}" target="_blank" rel="noopener noreferrer" class="visit-site-btn" onclick="event.stopPropagation()">
+                                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                  <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
+                                  <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
+                                </svg>
+                            </a>
+                        `;
+                    }
+                    
+                    itemElement.innerHTML = `
+                        <div class="relative aspect-w-4 aspect-h-3 overflow-hidden">
+                           <img src="${item.imageUrl}" alt="${item.title}" class="w-full h-full object-cover">
+                           ${visitButton}
+                        </div>
+                        <div class="p-5">
+                            <p class="text-sm font-semibold text-orange-400">${item.category}</p>
+                            <h3 class="mt-1 text-xl font-bold text-white">${item.title}</h3>
+                        </div>
+                    `;
+
+                    // The main click event for the card opens the modal
+                    itemElement.addEventListener('click', () => openModal(item));
+                    galleryGrid.appendChild(itemElement);
+                });
+            }
+
+            function setupFilters() {
+                const categories = ['All', ...new Set(portfolioItems.map(item => item.category))];
+                filterContainer.innerHTML = '';
+                
+                categories.forEach(category => {
+                    const button = document.createElement('button');
+                    button.textContent = category;
+                    button.className = 'filter-btn glass-effect px-4 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-white hover:border-gray-400 transition-all duration-300';
+                    if (category === 'All') button.classList.add('active');
+                    
+                    button.addEventListener('click', () => {
+                        filterContainer.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                        button.classList.add('active');
+                        
+                        const filteredItems = category === 'All' 
+                            ? portfolioItems 
+                            : portfolioItems.filter(item => item.category === category);
+                        populateGallery(filteredItems);
+                    });
+                    filterContainer.appendChild(button);
+                });
+            }
+
+            function openModal(item) {
+                modalImage.src = item.imageUrl;
+                modalImage.alt = item.title;
+                modalTitle.textContent = item.title;
+                modalCategory.textContent = item.category;
+                modalDescription.textContent = item.description;
+
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+                
+                modalContent.classList.remove('modal-leave-to');
+                modalContent.classList.add('modal-enter-from');
+                requestAnimationFrame(() => {
+                  modalContent.classList.remove('modal-enter-from');
+                });
+            }
+
+            function closeModal() {
+                 modalContent.classList.add('modal-leave-to');
+                 setTimeout(() => {
+                    modal.classList.add('hidden');
+                    document.body.style.overflow = '';
+                }, 300);
+            }
+
+            // --- EVENT LISTENERS ---
+            closeModalBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeModal();
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeModal();
+            });
+
+            // --- INITIALIZATION ---
+            setupFilters();
+            populateGallery(portfolioItems);
+        });
+    </script>
+</body>
+</html>
